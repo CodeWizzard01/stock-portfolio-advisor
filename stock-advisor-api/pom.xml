@@ -50,6 +50,25 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-spring-boot-starter</artifactId>
+			<version>0.35.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
+			<version>0.35.0</version>
+		</dependency>
+
+		<!--		<dependency>-->
+		<!--			<groupId>dev.langchain4j</groupId>-->
+		<!--			<artifactId>langchain4j-ollama-spring-boot-starter</artifactId>-->
+		<!--			<version>0.35.0</version>-->
+		<!--		</dependency>-->
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
