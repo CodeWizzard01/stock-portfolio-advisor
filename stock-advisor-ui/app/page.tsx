@@ -36,6 +36,12 @@ function ChatHome() {
     }
   };
 
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Enter" && inputLength > 0) {
+        handleSendMessage();
+      }
+    };
+
   return (
     <div>
       <Card>
@@ -50,6 +56,7 @@ function ChatHome() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             className="m-2"
+            onKeyDown={handleKeyDown}
           />
           <Button onClick={handleSendMessage} disabled={inputLength === 0}>
             <Send />
@@ -57,10 +64,7 @@ function ChatHome() {
         </CardFooter>
         <CardContent>
           {messages.map((message, index) => (
-            <div
-              key={index}
-              className="border-b border-gray-500 py-2"
-            >
+            <div key={index} className="border-b border-gray-500 py-2">
               <Typography element="h5" as="h5">
                 {message.user} ({message.time}):
               </Typography>
