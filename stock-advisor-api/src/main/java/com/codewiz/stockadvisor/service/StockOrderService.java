@@ -4,6 +4,7 @@ import com.codewiz.stockadvisor.model.OrderType;
 import com.codewiz.stockadvisor.model.StockHoldingDetails;
 import com.codewiz.stockadvisor.model.StockOrder;
 import com.codewiz.stockadvisor.repository.StockOrderRepository;
+import dev.langchain4j.agent.tool.Tool;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ public class StockOrderService {
 
     private final StockOrderRepository stockOrderRepository;
 
+    @Tool
     public StockOrder createOrder(StockOrder order) {
         StockOrder newOrder = new StockOrder(
                 null,
@@ -31,6 +33,7 @@ public class StockOrderService {
     }
 
 
+    @Tool
     public List<StockOrder> getAllOrders() {
         return stockOrderRepository.findAll();
     }
@@ -43,6 +46,7 @@ public class StockOrderService {
         return stockOrderRepository.findBySymbol(symbol);
     }
 
+    @Tool
     public List<StockHoldingDetails> getStockHoldingDetails() {
         return stockOrderRepository.findAll().stream()
                 .collect(Collectors.groupingBy(StockOrder::symbol, Collectors.summingInt(order ->
