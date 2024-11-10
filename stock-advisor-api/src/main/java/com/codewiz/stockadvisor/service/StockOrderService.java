@@ -49,7 +49,7 @@ public class StockOrderService {
     @Tool
     public List<StockHoldingDetails> getStockHoldingDetails() {
         return stockOrderRepository.findAll().stream()
-                .collect(Collectors.groupingBy(StockOrder::symbol, Collectors.summingInt(order ->
+                .collect(Collectors.groupingBy(StockOrder::symbol, Collectors.summingDouble(order ->
                         order.orderType() == OrderType.BUY ? order.quantity() : -order.quantity())))
                 .entrySet().stream()
                 .map(entry -> new StockHoldingDetails(entry.getKey(), entry.getValue()))
