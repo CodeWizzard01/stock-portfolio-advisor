@@ -1,4 +1,4 @@
-package com.codewiz.stockadvisor;
+package com.codewiz.stockadvisor.controller;
 
 import com.codewiz.stockadvisor.assistant.StockAdvisorAssistant;
 import lombok.AllArgsConstructor;

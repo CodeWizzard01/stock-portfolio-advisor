@@ -1,15 +1,20 @@
 package com.codewiz.stockadvisor.service;
 
 import com.codewiz.stockadvisor.config.StockAPIConfig;
+import com.codewiz.stockadvisor.model.CompanyDetails;
+import com.codewiz.stockadvisor.model.StockPrice;
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @AllArgsConstructor
@@ -59,10 +64,69 @@ public class StockInformationService {
     }
 
     private String fetchData(String s) {
-        return  restClient.get()
+        return restClient.get()
                 .uri(s + "?apikey=" + stockAPIConfig.getApiKey())
                 .retrieve()
                 .body(String.class)
                 .replaceAll("\\s+", " ").trim();
     }
+
+    public StockPrice getPrice(String symbol) {
+        log.info("getPrice.start.Current thread: "+Thread.currentThread());
+        var priceList = restClient.get()
+                .uri("/quote/" + symbol + "?apikey=" + stockAPIConfig.getApiKey())
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<StockPrice>>() {
+                });
+        if(priceList==null || priceList.isEmpty()){
+            throw new RuntimeException("No price found for the symbol: "+symbol);
+        }
+        log.info("getPrice.end.Current thread: "+Thread.currentThread());
+        return priceList.getFirst();
+    }
+
+    public CompanyDetails getCompanyDetails(String symbol) {
+        log.info("getCompanyDetails.start.Current thread: "+Thread.currentThread());
+        var companyList = restClient.get()
+                .uri("/profile/" + symbol + "?apikey=" + stockAPIConfig.getApiKey())
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<CompanyDetails>>() {
+                });
+        if(companyList==null || companyList.isEmpty()){
+            throw new RuntimeException("No company details found for the symbol: "+symbol);
+        }
+        log.info("getCompanyDetails.end.Current thread: "+Thread.currentThread());
+        return companyList.getFirst();
+    }
+
+    @Async
+    public CompletableFuture<StockPrice> getPriceAsync(String symbol) {
+        log.info("getPriceAsync.start.Current thread: " + Thread.currentThread());
+        var priceList = restClient.get()
+                .uri("/quote/" + symbol + "?apikey=" + stockAPIConfig.getApiKey())
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<StockPrice>>() {
+                });
+        if (priceList == null || priceList.isEmpty()) {
+            throw new RuntimeException("No price found for the symbol: " + symbol);
+        }
+        log.info("getPriceAsync.end.Current thread: " + Thread.currentThread());
+        return CompletableFuture.completedFuture(priceList.getFirst());
+    }
+
+    @Async
+    public CompletableFuture<CompanyDetails> getCompanyDetailsAsync(String symbol) {
+        log.info("getCompanyDetailsAsync.start.Current thread: " + Thread.currentThread());
+        var companyList = restClient.get()
+                .uri("/profile/" + symbol + "?apikey=" + stockAPIConfig.getApiKey())
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<CompanyDetails>>() {
+                });
+        if (companyList == null || companyList.isEmpty()) {
+            throw new RuntimeException("No company details found for the symbol: " + symbol);
+        }
+        log.info("getCompanyDetailsAsync.end.Current thread: " + Thread.currentThread());
+        return CompletableFuture.completedFuture(companyList.getFirst());
+    }
+
 }
